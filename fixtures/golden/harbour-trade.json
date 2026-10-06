@@ -1,0 +1,237 @@
+{
+  "schema_version": "1.0",
+  "snapshot_id": "golden-harbour",
+  "company": {
+    "company_id": "harbour-trade",
+    "name": "Harbour Trade",
+    "industry": "Import / Export retail",
+    "jurisdiction": "HK",
+    "functional_currency": "HKD"
+  },
+  "seed": 42,
+  "period_start": "2026-01-01",
+  "period_end": "2026-04-01",
+  "opening_balance": "40000.00",
+  "transactions": [
+    {
+      "transaction_id": "harbour-revenue-1",
+      "posted_on": "2026-01-01",
+      "amount": "20000.00",
+      "currency": "HKD",
+      "direction": "credit",
+      "movement_type": "operating",
+      "category": "revenue",
+      "counterparty": "Synthetic counterparty harbour-revenue-1",
+      "counterparty_country": "HK",
+      "description": "Synthetic revenue payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "harbour-rent-1",
+      "posted_on": "2026-01-05",
+      "amount": "4000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "rent",
+      "counterparty": "Synthetic counterparty harbour-rent-1",
+      "counterparty_country": "HK",
+      "description": "Synthetic rent payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "harbour-unknown-1",
+      "posted_on": "2026-01-15",
+      "amount": "7000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "unknown",
+      "counterparty": "Synthetic counterparty harbour-unknown-1",
+      "counterparty_country": "CN",
+      "description": "Synthetic unknown payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": null,
+        "chargeable_profits_link_confirmed": null,
+        "documentation_available": false,
+        "capital_nature": null,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "harbour-revenue-2",
+      "posted_on": "2026-02-01",
+      "amount": "20000.00",
+      "currency": "HKD",
+      "direction": "credit",
+      "movement_type": "operating",
+      "category": "revenue",
+      "counterparty": "Synthetic counterparty harbour-revenue-2",
+      "counterparty_country": "HK",
+      "description": "Synthetic revenue payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "harbour-rent-2",
+      "posted_on": "2026-02-05",
+      "amount": "4000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "rent",
+      "counterparty": "Synthetic counterparty harbour-rent-2",
+      "counterparty_country": "HK",
+      "description": "Synthetic rent payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "harbour-unknown-2",
+      "posted_on": "2026-02-15",
+      "amount": "5000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "unknown",
+      "counterparty": "Synthetic counterparty harbour-unknown-2",
+      "counterparty_country": "SG",
+      "description": "Synthetic unknown payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": null,
+        "chargeable_profits_link_confirmed": null,
+        "documentation_available": false,
+        "capital_nature": null,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "harbour-revenue-3",
+      "posted_on": "2026-03-01",
+      "amount": "20000.00",
+      "currency": "HKD",
+      "direction": "credit",
+      "movement_type": "operating",
+      "category": "revenue",
+      "counterparty": "Synthetic counterparty harbour-revenue-3",
+      "counterparty_country": "HK",
+      "description": "Synthetic revenue payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "harbour-rent-3",
+      "posted_on": "2026-03-05",
+      "amount": "4000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "rent",
+      "counterparty": "Synthetic counterparty harbour-rent-3",
+      "counterparty_country": "HK",
+      "description": "Synthetic rent payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "harbour-unknown-3",
+      "posted_on": "2026-03-15",
+      "amount": "3000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "unknown",
+      "counterparty": "Synthetic counterparty harbour-unknown-3",
+      "counterparty_country": "US",
+      "description": "Synthetic unknown payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": null,
+        "chargeable_profits_link_confirmed": null,
+        "documentation_available": false,
+        "capital_nature": null,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "harbour-profits-tax",
+      "posted_on": "2026-03-25",
+      "amount": "3000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "tax",
+      "category": "profits_tax",
+      "counterparty": "Synthetic counterparty harbour-profits-tax",
+      "counterparty_country": "HK",
+      "description": "Synthetic profits_tax payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": "profits_tax"
+      }
+    }
+  ]
+}

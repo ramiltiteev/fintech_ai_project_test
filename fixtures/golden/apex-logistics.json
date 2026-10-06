@@ -1,0 +1,193 @@
+{
+  "schema_version": "1.0",
+  "snapshot_id": "golden-apex",
+  "company": {
+    "company_id": "apex-logistics",
+    "name": "Apex Logistics",
+    "industry": "B2B logistics",
+    "jurisdiction": "HK",
+    "functional_currency": "HKD"
+  },
+  "seed": 42,
+  "period_start": "2026-01-01",
+  "period_end": "2026-04-01",
+  "opening_balance": "30000.00",
+  "transactions": [
+    {
+      "transaction_id": "apex-fuel-1",
+      "posted_on": "2026-01-10",
+      "amount": "20000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "fuel",
+      "counterparty": "Synthetic counterparty apex-fuel-1",
+      "counterparty_country": "HK",
+      "description": "Synthetic fuel payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "apex-sub-1",
+      "posted_on": "2026-01-20",
+      "amount": "80000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "subcontractors",
+      "counterparty": "Synthetic counterparty apex-sub-1",
+      "counterparty_country": "HK",
+      "description": "Synthetic subcontractors payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "apex-fuel-2",
+      "posted_on": "2026-02-10",
+      "amount": "20000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "fuel",
+      "counterparty": "Synthetic counterparty apex-fuel-2",
+      "counterparty_country": "HK",
+      "description": "Synthetic fuel payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "apex-sub-2",
+      "posted_on": "2026-02-20",
+      "amount": "80000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "subcontractors",
+      "counterparty": "Synthetic counterparty apex-sub-2",
+      "counterparty_country": "HK",
+      "description": "Synthetic subcontractors payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "apex-revenue-60",
+      "posted_on": "2026-02-28",
+      "amount": "180000.00",
+      "currency": "HKD",
+      "direction": "credit",
+      "movement_type": "operating",
+      "category": "revenue",
+      "counterparty": "Synthetic counterparty apex-revenue-60",
+      "counterparty_country": "HK",
+      "description": "Synthetic revenue payment",
+      "invoice_issued_on": "2025-12-30",
+      "payment_terms_days": 60,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "apex-fuel-3",
+      "posted_on": "2026-03-10",
+      "amount": "20000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "fuel",
+      "counterparty": "Synthetic counterparty apex-fuel-3",
+      "counterparty_country": "HK",
+      "description": "Synthetic fuel payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "apex-sub-3",
+      "posted_on": "2026-03-20",
+      "amount": "80000.00",
+      "currency": "HKD",
+      "direction": "debit",
+      "movement_type": "operating",
+      "category": "subcontractors",
+      "counterparty": "Synthetic counterparty apex-sub-3",
+      "counterparty_country": "HK",
+      "description": "Synthetic subcontractors payment",
+      "invoice_issued_on": null,
+      "payment_terms_days": null,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    },
+    {
+      "transaction_id": "apex-revenue-90",
+      "posted_on": "2026-03-31",
+      "amount": "180000.00",
+      "currency": "HKD",
+      "direction": "credit",
+      "movement_type": "operating",
+      "category": "revenue",
+      "counterparty": "Synthetic counterparty apex-revenue-90",
+      "counterparty_country": "HK",
+      "description": "Synthetic revenue payment",
+      "invoice_issued_on": "2025-12-31",
+      "payment_terms_days": 90,
+      "evidence": {
+        "synthetic": true,
+        "business_purpose_confirmed": true,
+        "chargeable_profits_link_confirmed": true,
+        "documentation_available": true,
+        "capital_nature": false,
+        "tax_kind": null
+      }
+    }
+  ]
+}

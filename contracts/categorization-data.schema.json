@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "categorization-data.schema.json",
+  "title": "categorization-data",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "known_opex_total": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+    },
+    "unclassified_operating_debits_total": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+    },
+    "inventory_total": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+    },
+    "non_opex_total": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+    },
+    "total_debits": {
+      "type": "string",
+      "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+    },
+    "category_totals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "revenue",
+              "rent",
+              "fuel",
+              "logistics",
+              "subcontractors",
+              "rd_contractors",
+              "cloud_services",
+              "other_opex",
+              "inventory",
+              "capital_equipment",
+              "profits_tax",
+              "taxes_other",
+              "unknown"
+            ]
+          },
+          "total": {
+            "type": "string",
+            "pattern": "^-?(0|[1-9][0-9]*)\\.[0-9]{2}$"
+          },
+          "share_percent": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)\\.[0-9]{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "transaction_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+            },
+            "minItems": 0,
+            "uniqueItems": true
+          },
+          "concentration_flag": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "category",
+          "total",
+          "share_percent",
+          "transaction_ids",
+          "concentration_flag"
+        ]
+      },
+      "minItems": 0
+    },
+    "unclassified_transaction_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "inventory_transaction_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "non_opex_transaction_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "known_opex_total",
+    "unclassified_operating_debits_total",
+    "inventory_total",
+    "non_opex_total",
+    "total_debits",
+    "category_totals",
+    "unclassified_transaction_ids",
+    "inventory_transaction_ids",
+    "non_opex_transaction_ids"
+  ]
+}

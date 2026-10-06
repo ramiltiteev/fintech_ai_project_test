@@ -1,0 +1,142 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "CalculateLiquidityRunway",
+      "description": "Compute cash balances, historical cash gaps and net operating burn runway from the immutable snapshot.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date"
+          },
+          "period_end": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "company_id",
+          "snapshot_id",
+          "period_start",
+          "period_end"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "CategorizeOpex",
+      "description": "Categorize operating expenses and separate unknown, inventory and non-OPEX debit movements.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date"
+          },
+          "period_end": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "company_id",
+          "snapshot_id",
+          "period_start",
+          "period_end"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "DetectCashFlowAnomalies",
+      "description": "Find deterministic payment outliers, monthly spending jumps and unclassified cross-border review signals.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date"
+          },
+          "period_end": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "company_id",
+          "snapshot_id",
+          "period_start",
+          "period_end"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "DraftHKProfitsTax",
+      "description": "Prepare a preliminary HK expense tax review schedule with rules and missing evidence; no tax payable computation.",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "company_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
+          "snapshot_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date"
+          },
+          "period_end": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "company_id",
+          "snapshot_id",
+          "period_start",
+          "period_end"
+        ]
+      }
+    }
+  }
+]

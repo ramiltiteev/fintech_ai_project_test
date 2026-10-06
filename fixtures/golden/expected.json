@@ -1,0 +1,96 @@
+{
+  "apex-logistics": {
+    "transaction_count": 8,
+    "closing_cash": "90000.00",
+    "operating_inflows": "360000.00",
+    "operating_outflows": "300000.00",
+    "average_net_burn": "-20000.00",
+    "minimum_cash": "-170000.00",
+    "minimum_cash_date": "2026-02-20",
+    "cash_gap_intervals": [
+      {
+        "start": "2026-01-20",
+        "end": "2026-02-28",
+        "open_at_period_end": false
+      },
+      {
+        "start": "2026-03-10",
+        "end": "2026-03-31",
+        "open_at_period_end": false
+      }
+    ],
+    "runway_status": "not_burning",
+    "runway_months": null,
+    "gross_coverage_months": "0.90",
+    "last_month_stress_runway_months": null,
+    "payment_lag_median_days": "75.00",
+    "known_opex_total": "300000.00",
+    "unclassified_operating_debits_total": "0.00",
+    "non_opex_total": "0.00",
+    "tax_decision_totals": {
+      "potentially_deductible": "300000.00",
+      "non_deductible": "0.00",
+      "review_required": "0.00",
+      "outside_expense_scope": "0.00"
+    }
+  },
+  "cloudscale-ai": {
+    "transaction_count": 19,
+    "closing_cash": "270000.00",
+    "operating_inflows": "150000.00",
+    "operating_outflows": "480000.00",
+    "average_net_burn": "110000.00",
+    "minimum_cash": "270000.00",
+    "minimum_cash_date": "2026-03-20",
+    "cash_gap_intervals": [],
+    "runway_status": "finite",
+    "runway_months": "2.45",
+    "gross_coverage_months": "1.69",
+    "last_month_stress_runway_months": "1.29",
+    "known_opex_total": "480000.00",
+    "unclassified_operating_debits_total": "0.00",
+    "non_opex_total": "0.00",
+    "outlier_transaction_id": "cloud-abnormal-debit",
+    "outlier_baseline_median": "20000.00",
+    "outlier_baseline_count": 10,
+    "outlier_threshold": "60000.00",
+    "outlier_amount": "120000.00",
+    "monthly_jump_current": "260000.00",
+    "monthly_jump_previous": "120000.00",
+    "tax_decision_totals": {
+      "potentially_deductible": "0.00",
+      "non_deductible": "0.00",
+      "review_required": "480000.00",
+      "outside_expense_scope": "0.00"
+    }
+  },
+  "harbour-trade": {
+    "transaction_count": 10,
+    "closing_cash": "70000.00",
+    "operating_inflows": "60000.00",
+    "operating_outflows": "27000.00",
+    "average_net_burn": "-11000.00",
+    "minimum_cash": "40000.00",
+    "minimum_cash_date": "2026-01-01",
+    "cash_gap_intervals": [],
+    "runway_status": "not_burning",
+    "runway_months": null,
+    "gross_coverage_months": "7.78",
+    "last_month_stress_runway_months": null,
+    "known_opex_total": "12000.00",
+    "unclassified_operating_debits_total": "15000.00",
+    "non_opex_total": "3000.00",
+    "unclassified_cross_border_total": "15000.00",
+    "unclassified_cross_border_ids": [
+      "harbour-unknown-1",
+      "harbour-unknown-2",
+      "harbour-unknown-3"
+    ],
+    "tax_decision_totals": {
+      "potentially_deductible": "12000.00",
+      "non_deductible": "3000.00",
+      "review_required": "15000.00",
+      "outside_expense_scope": "0.00"
+    }
+  }
+}

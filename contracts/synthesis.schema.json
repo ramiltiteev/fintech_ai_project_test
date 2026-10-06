@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "synthesis.schema.json",
+  "title": "synthesis",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "insights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "finding_code": {
+            "type": "string",
+            "enum": [
+              "low_runway",
+              "cash_gap",
+              "opex_concentration",
+              "cashflow_anomaly",
+              "unclassified_cross_border",
+              "tax_review_required",
+              "no_material_findings"
+            ]
+          },
+          "action_code": {
+            "type": "string",
+            "enum": [
+              "prepare_liquidity_buffer",
+              "review_operating_spend",
+              "review_collection_terms",
+              "verify_payment_documents",
+              "review_tax_treatment",
+              "monitor_cash"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "tool_result_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                },
+                "fact_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+                }
+              },
+              "required": [
+                "tool_result_id",
+                "fact_id"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "finding_code",
+          "action_code",
+          "evidence"
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 6
+    }
+  },
+  "required": [
+    "insights"
+  ]
+}

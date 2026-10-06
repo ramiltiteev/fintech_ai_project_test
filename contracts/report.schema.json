@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "report.schema.json",
+  "title": "report",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "company": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "industry": {
+          "type": "string",
+          "minLength": 1
+        },
+        "jurisdiction": {
+          "const": "HK"
+        },
+        "functional_currency": {
+          "const": "HKD"
+        }
+      },
+      "required": [
+        "company_id",
+        "name",
+        "industry",
+        "jurisdiction",
+        "functional_currency"
+      ]
+    },
+    "company_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "snapshot_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "period_start": {
+      "type": "string",
+      "format": "date"
+    },
+    "period_end": {
+      "type": "string",
+      "format": "date"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "provider_mode": {
+      "type": "string",
+      "enum": [
+        "mock",
+        "live"
+      ]
+    },
+    "model": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "complete",
+        "partial"
+      ]
+    },
+    "partial_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "$ref": "fact.schema.json"
+      },
+      "minItems": 0
+    },
+    "synthesis": {
+      "anyOf": [
+        {
+          "$ref": "synthesis.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tax_draft": {
+      "anyOf": [
+        {
+          "$ref": "tax-data.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tool_results": {
+      "type": "array",
+      "items": {
+        "$ref": "tool-result.schema.json"
+      },
+      "minItems": 0
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "generated_at",
+    "company",
+    "company_id",
+    "snapshot_id",
+    "period_start",
+    "period_end",
+    "seed",
+    "provider_mode",
+    "model",
+    "status",
+    "partial_reasons",
+    "facts",
+    "synthesis",
+    "tax_draft",
+    "tool_results",
+    "limitations"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "complete"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "partial_reasons": {
+            "maxItems": 0
+          },
+          "synthesis": {
+            "$ref": "synthesis.schema.json"
+          },
+          "tax_draft": {
+            "$ref": "tax-data.schema.json"
+          },
+          "tool_results": {
+            "minItems": 4
+          }
+        }
+      }
+    }
+  ]
+}

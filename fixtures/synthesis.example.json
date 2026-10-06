@@ -1,0 +1,22 @@
+{
+  "insights": [
+    {
+      "finding_code": "low_runway",
+      "action_code": "review_operating_spend",
+      "evidence": [
+        {
+          "tool_result_id": "golden-cloud-liquidity",
+          "fact_id": "cloud:liquidity:closing_cash"
+        },
+        {
+          "tool_result_id": "golden-cloud-liquidity",
+          "fact_id": "cloud:liquidity:average_net_burn"
+        },
+        {
+          "tool_result_id": "golden-cloud-liquidity",
+          "fact_id": "cloud:liquidity:runway_months"
+        }
+      ]
+    }
+  ]
+}

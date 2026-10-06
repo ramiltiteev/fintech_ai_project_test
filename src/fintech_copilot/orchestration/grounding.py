@@ -1,0 +1,145 @@
+from __future__ import annotations
+
+from fintech_copilot.domain.models import Dataset, Scope
+from fintech_copilot.domain.results import (
+    AnomalyResult,
+    CategorizationResult,
+    LiquidityResult,
+    Success,
+    TaxResult,
+    ToolResult,
+)
+from fintech_copilot.tools.catalogue import catalogue
+from fintech_copilot.tools.dispatcher import TOOLS
+
+from .models import Action, Finding, Insight, Reference, Synthesis
+
+ACTIONS: dict[Finding, tuple[Action, ...]] = {
+    "low_runway": ("prepare_liquidity_buffer", "review_operating_spend"),
+    "cash_gap": ("review_collection_terms", "prepare_liquidity_buffer"),
+    "opex_concentration": ("review_operating_spend",),
+    "cashflow_anomaly": ("verify_payment_documents",),
+    "unclassified_cross_border": ("verify_payment_documents",),
+    "tax_review_required": ("review_tax_treatment",),
+    "no_material_findings": ("monitor_cash",),
+}
+
+
+def full_results(results: tuple[ToolResult, ...], scope: Scope) -> tuple[Success, ...]:
+    by_name: dict[str, Success] = {}
+    for result in results:
+        if result.status == "ok" and (
+            result.company_id,
+            result.snapshot_id,
+            result.period_start,
+            result.period_end,
+        ) == (scope.company_id, scope.snapshot_id, scope.period_start, scope.period_end):
+            by_name[result.tool_name] = result
+    return tuple(by_name[name] for name in TOOLS if name in by_name)
+
+
+def options(results: tuple[Success, ...]) -> dict[Finding, list[tuple[Reference, ...]]]:
+    """Select evidence from tool-owned predicates; never calculate financial values."""
+    choices: dict[Finding, list[tuple[Reference, ...]]] = {}
+
+    def add(code: Finding, result: Success, metrics: tuple[str, ...]) -> None:
+        by_metric = {fact.metric: fact for fact in result.facts}
+        if any(metric not in by_metric for metric in metrics):
+            return
+        refs = tuple(
+            Reference(tool_result_id=result.tool_result_id, fact_id=by_metric[m].fact_id)
+            for m in metrics
+        )
+        choices.setdefault(code, []).append(refs)
+
+    for result in results:
+        if isinstance(result, LiquidityResult):
+            if result.data.low_runway:
+                add("low_runway", result, ("runway_months", "closing_cash", "average_net_burn"))
+            if result.data.cash_gap_intervals:
+                add("cash_gap", result, ("cash_gap_ids", "minimum_cash"))
+        elif isinstance(result, CategorizationResult):
+            for row in sorted(result.data.category_totals, key=lambda r: r.total, reverse=True):
+                if row.concentration_flag:
+                    add(
+                        "opex_concentration",
+                        result,
+                        (
+                            f"category:{row.category}:total",
+                            f"category:{row.category}:share_percent",
+                        ),
+                    )
+        elif isinstance(result, AnomalyResult):
+            for anomaly in result.data.findings:
+                if anomaly.kind != "unclassified_cross_border":
+                    prefix = f"anomaly:{anomaly.anomaly_id}"
+                    add(
+                        "cashflow_anomaly",
+                        result,
+                        (
+                            "anomaly_ids",
+                            f"{prefix}:amount",
+                            f"{prefix}:baseline_amount",
+                            f"{prefix}:threshold_amount",
+                        ),
+                    )
+            if result.data.unclassified_cross_border_transaction_ids:
+                add(
+                    "unclassified_cross_border",
+                    result,
+                    ("unclassified_cross_border_ids", "unclassified_cross_border_total"),
+                )
+        elif isinstance(result, TaxResult) and any(
+            row.decision == "review_required" for row in result.data.expense_rows
+        ):
+            add(
+                "tax_review_required",
+                result,
+                ("tax:review_required:ids", "tax:review_required:total", "tax:review_rule_ids"),
+            )
+    if not choices and len({result.tool_name for result in results}) == len(TOOLS):
+        refs = tuple(
+            Reference(tool_result_id=r.tool_result_id, fact_id=r.facts[0].fact_id) for r in results
+        )
+        choices["no_material_findings"] = [refs]
+    return choices
+
+
+def mock_synthesis(results: tuple[Success, ...]) -> Synthesis:
+    choices = options(results)
+    return Synthesis(
+        insights=tuple(
+            Insight(finding_code=code, action_code=ACTIONS[code][0], evidence=evidence[0])
+            for code, evidence in choices.items()
+        )[:6]
+    )
+
+
+def validate_synthesis(
+    synthesis: Synthesis, results: tuple[ToolResult, ...], dataset: Dataset
+) -> None:
+    successful = full_results(results, dataset.scope)
+    if {r.tool_name for r in successful} != set(TOOLS):
+        raise ValueError("MISSING_FULL_PERIOD_TOOLS")
+    transaction_ids = {tx.transaction_id for tx in dataset.transactions}
+    facts = {}
+    for result in successful:
+        expected = catalogue(dataset, dataset.scope, result.tool_result_id, result.data)
+        if expected != result.facts:
+            raise ValueError("FACT_DATA_MISMATCH")
+        for fact in result.facts:
+            if not set(fact.transaction_ids) <= transaction_ids:
+                raise ValueError("UNKNOWN_TRANSACTION_EVIDENCE")
+            facts[(result.tool_result_id, fact.fact_id)] = fact
+    choices = options(successful)
+    for insight in synthesis.insights:
+        if insight.action_code not in ACTIONS[insight.finding_code]:
+            raise ValueError("INCOMPATIBLE_ACTION")
+        refs = {(ref.tool_result_id, ref.fact_id) for ref in insight.evidence}
+        if len(refs) != len(insight.evidence) or not refs <= facts.keys():
+            raise ValueError("FABRICATED_STALE_OR_DUPLICATE_REFERENCE")
+        if not any(
+            {(ref.tool_result_id, ref.fact_id) for ref in candidate} <= refs
+            for candidate in choices.get(insight.finding_code, [])
+        ):
+            raise ValueError("UNSUPPORTED_FINDING_OR_EVIDENCE")

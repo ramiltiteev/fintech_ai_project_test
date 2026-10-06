@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "seed": 42,
+  "period_start": "2026-07-01",
+  "period_end": "2026-10-01",
+  "functional_currency": "HKD",
+  "anomaly_config": {
+    "minimum_baseline_count": 5,
+    "baseline_lookback_months": 3,
+    "transaction_ratio": "3.00",
+    "transaction_min_delta": "10000.00",
+    "monthly_jump_ratio": "1.50",
+    "monthly_jump_min_delta": "10000.00"
+  },
+  "profiles": [
+    {
+      "company": {
+        "company_id": "apex-logistics",
+        "name": "Apex Logistics",
+        "industry": "B2B logistics",
+        "jurisdiction": "HK",
+        "functional_currency": "HKD"
+      },
+      "transaction_count": 90,
+      "opening_balance": "300000.00",
+      "business_question": "Оценить исторические кассовые разрывы Q3 и зависимость от сроков оплаты, топлива и субподрядчиков.",
+      "monthly_operating_inflows_target": "1200000.00",
+      "monthly_operating_outflows_target": "1050000.00",
+      "opex_shares": {
+        "fuel": "0.30",
+        "subcontractors": "0.50",
+        "rent": "0.05",
+        "logistics": "0.15"
+      },
+      "injections": {
+        "late_receipts": {
+          "payment_terms_days": [
+            60,
+            90
+          ],
+          "schedule": "operating expenses early in month; receipts late in month"
+        }
+      },
+      "acceptance": {
+        "historical_gap_required": true,
+        "net_60_receipts_required": true,
+        "net_90_receipts_required": true,
+        "dominant_opex": [
+          "fuel",
+          "subcontractors"
+        ]
+      }
+    },
+    {
+      "company": {
+        "company_id": "cloudscale-ai",
+        "name": "CloudScale AI",
+        "industry": "Cross-border SaaS",
+        "jurisdiction": "HK",
+        "functional_currency": "HKD"
+      },
+      "transaction_count": 120,
+      "opening_balance": "600000.00",
+      "business_question": "Проверить runway и аномальные списания на подрядчиков и R&D.",
+      "monthly_operating_inflows_target": "50000.00",
+      "monthly_base_operating_outflows_target": "100000.00",
+      "opex_shares": {
+        "rd_contractors": "0.75",
+        "cloud_services": "0.20",
+        "rent": "0.05"
+      },
+      "injections": {
+        "abnormal_debit": {
+          "posted_on": "2026-09-20",
+          "category": "rd_contractors",
+          "amount": "180000.00",
+          "included_in_transaction_count": true
+        }
+      },
+      "acceptance": {
+        "finite_runway_below_months": "3.00",
+        "abnormal_debit_detected": true,
+        "dominant_opex": [
+          "rd_contractors"
+        ]
+      }
+    },
+    {
+      "company": {
+        "company_id": "harbour-trade",
+        "name": "Harbour Trade",
+        "industry": "Import / Export retail",
+        "jurisdiction": "HK",
+        "functional_currency": "HKD"
+      },
+      "transaction_count": 150,
+      "opening_balance": "400000.00",
+      "business_question": "Разобрать неклассифицированные трансграничные платежи и подготовить перечень вопросов для аудитора.",
+      "monthly_operating_inflows_target": "240000.00",
+      "monthly_operating_outflows_target": "180000.00",
+      "cash_category_shares": {
+        "inventory": "0.55",
+        "logistics": "0.15",
+        "rent": "0.10",
+        "unknown": "0.20"
+      },
+      "injections": {
+        "unknown_cross_border": {
+          "minimum_count": 3,
+          "counterparty_countries": [
+            "CN",
+            "SG",
+            "US"
+          ],
+          "documentation_available": false
+        },
+        "profits_tax_payment": {
+          "posted_on": "2026-09-25",
+          "amount": "10000.00",
+          "included_in_transaction_count": true
+        }
+      },
+      "acceptance": {
+        "unknown_cross_border_minimum_count": 3,
+        "review_required": true,
+        "profits_tax_non_deductible": true
+      }
+    }
+  ]
+}

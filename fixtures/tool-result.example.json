@@ -1,0 +1,169 @@
+{
+  "schema_version": "1.0",
+  "tool_result_id": "golden-cloud-liquidity",
+  "tool_name": "CalculateLiquidityRunway",
+  "company_id": "cloudscale-ai",
+  "snapshot_id": "golden-cloud",
+  "period_start": "2026-01-01",
+  "period_end": "2026-04-01",
+  "status": "ok",
+  "data": {
+    "opening_cash": "600000.00",
+    "closing_cash": "270000.00",
+    "minimum_cash": "270000.00",
+    "minimum_cash_date": "2026-03-20",
+    "cash_gap_intervals": [],
+    "operating_inflows": "150000.00",
+    "operating_outflows": "480000.00",
+    "monthly": [
+      {
+        "month": "2026-01",
+        "operating_inflows": "50000.00",
+        "operating_outflows": "100000.00",
+        "net_burn": "50000.00",
+        "transaction_ids": [
+          "cloud-revenue-1",
+          "cloud-rd-1-1",
+          "cloud-rd-1-2",
+          "cloud-rd-1-3",
+          "cloud-rd-1-4",
+          "cloud-rd-1-5"
+        ]
+      },
+      {
+        "month": "2026-02",
+        "operating_inflows": "50000.00",
+        "operating_outflows": "120000.00",
+        "net_burn": "70000.00",
+        "transaction_ids": [
+          "cloud-revenue-2",
+          "cloud-rd-2-1",
+          "cloud-rd-2-2",
+          "cloud-rd-2-3",
+          "cloud-rd-2-4",
+          "cloud-rd-2-5"
+        ]
+      },
+      {
+        "month": "2026-03",
+        "operating_inflows": "50000.00",
+        "operating_outflows": "260000.00",
+        "net_burn": "210000.00",
+        "transaction_ids": [
+          "cloud-revenue-3",
+          "cloud-rd-3-1",
+          "cloud-rd-3-2",
+          "cloud-rd-3-3",
+          "cloud-rd-3-4",
+          "cloud-rd-3-5",
+          "cloud-abnormal-debit"
+        ]
+      }
+    ],
+    "average_net_burn": "110000.00",
+    "last_month_net_burn": "210000.00",
+    "runway_status": "finite",
+    "runway_months": "2.45",
+    "last_month_stress_runway_months": "1.29",
+    "gross_coverage_months": "1.69",
+    "payment_lag": {
+      "receipt_count": 0,
+      "median_days": null,
+      "net_60_count": 0,
+      "net_90_count": 0,
+      "transaction_ids": []
+    },
+    "low_runway": true,
+    "last_month_stress_low_runway": true
+  },
+  "facts": [
+    {
+      "fact_id": "cloud:liquidity:closing_cash",
+      "tool_result_id": "golden-cloud-liquidity",
+      "metric": "closing_cash",
+      "value": "270000.00",
+      "unit": "HKD",
+      "transaction_ids": [
+        "cloud-revenue-1",
+        "cloud-rd-1-1",
+        "cloud-rd-1-2",
+        "cloud-rd-1-3",
+        "cloud-rd-1-4",
+        "cloud-rd-1-5",
+        "cloud-revenue-2",
+        "cloud-rd-2-1",
+        "cloud-rd-2-2",
+        "cloud-rd-2-3",
+        "cloud-rd-2-4",
+        "cloud-rd-2-5",
+        "cloud-revenue-3",
+        "cloud-rd-3-1",
+        "cloud-rd-3-2",
+        "cloud-rd-3-3",
+        "cloud-rd-3-4",
+        "cloud-rd-3-5",
+        "cloud-abnormal-debit"
+      ],
+      "derivation_code": "cash_from_opening_and_all_movements"
+    },
+    {
+      "fact_id": "cloud:liquidity:average_net_burn",
+      "tool_result_id": "golden-cloud-liquidity",
+      "metric": "average_net_burn",
+      "value": "110000.00",
+      "unit": "HKD",
+      "transaction_ids": [
+        "cloud-revenue-1",
+        "cloud-rd-1-1",
+        "cloud-rd-1-2",
+        "cloud-rd-1-3",
+        "cloud-rd-1-4",
+        "cloud-rd-1-5",
+        "cloud-revenue-2",
+        "cloud-rd-2-1",
+        "cloud-rd-2-2",
+        "cloud-rd-2-3",
+        "cloud-rd-2-4",
+        "cloud-rd-2-5",
+        "cloud-revenue-3",
+        "cloud-rd-3-1",
+        "cloud-rd-3-2",
+        "cloud-rd-3-3",
+        "cloud-rd-3-4",
+        "cloud-rd-3-5",
+        "cloud-abnormal-debit"
+      ],
+      "derivation_code": "monthly_operating_net_burn"
+    },
+    {
+      "fact_id": "cloud:liquidity:runway_months",
+      "tool_result_id": "golden-cloud-liquidity",
+      "metric": "runway_months",
+      "value": "2.45",
+      "unit": "months",
+      "transaction_ids": [
+        "cloud-revenue-1",
+        "cloud-rd-1-1",
+        "cloud-rd-1-2",
+        "cloud-rd-1-3",
+        "cloud-rd-1-4",
+        "cloud-rd-1-5",
+        "cloud-revenue-2",
+        "cloud-rd-2-1",
+        "cloud-rd-2-2",
+        "cloud-rd-2-3",
+        "cloud-rd-2-4",
+        "cloud-rd-2-5",
+        "cloud-revenue-3",
+        "cloud-rd-3-1",
+        "cloud-rd-3-2",
+        "cloud-rd-3-3",
+        "cloud-rd-3-4",
+        "cloud-rd-3-5",
+        "cloud-abnormal-debit"
+      ],
+      "derivation_code": "closing_cash_over_average_net_burn"
+    }
+  ],
+  "warnings": []
+}

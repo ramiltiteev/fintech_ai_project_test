@@ -1,0 +1,353 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tool-result.schema.json",
+  "title": "tool-result",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "tool_result_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "tool_name": {
+          "const": "CalculateLiquidityRunway"
+        },
+        "company_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "snapshot_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "period_start": {
+          "type": "string",
+          "format": "date"
+        },
+        "period_end": {
+          "type": "string",
+          "format": "date"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "liquidity-data.schema.json"
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "$ref": "fact.schema.json"
+          },
+          "minItems": 1
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schema_version",
+        "tool_result_id",
+        "tool_name",
+        "company_id",
+        "snapshot_id",
+        "period_start",
+        "period_end",
+        "status",
+        "data",
+        "facts",
+        "warnings"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "tool_result_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "tool_name": {
+          "const": "CategorizeOpex"
+        },
+        "company_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "snapshot_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "period_start": {
+          "type": "string",
+          "format": "date"
+        },
+        "period_end": {
+          "type": "string",
+          "format": "date"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "categorization-data.schema.json"
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "$ref": "fact.schema.json"
+          },
+          "minItems": 1
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schema_version",
+        "tool_result_id",
+        "tool_name",
+        "company_id",
+        "snapshot_id",
+        "period_start",
+        "period_end",
+        "status",
+        "data",
+        "facts",
+        "warnings"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "tool_result_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "tool_name": {
+          "const": "DetectCashFlowAnomalies"
+        },
+        "company_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "snapshot_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "period_start": {
+          "type": "string",
+          "format": "date"
+        },
+        "period_end": {
+          "type": "string",
+          "format": "date"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "anomaly-data.schema.json"
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "$ref": "fact.schema.json"
+          },
+          "minItems": 1
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schema_version",
+        "tool_result_id",
+        "tool_name",
+        "company_id",
+        "snapshot_id",
+        "period_start",
+        "period_end",
+        "status",
+        "data",
+        "facts",
+        "warnings"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "tool_result_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "tool_name": {
+          "const": "DraftHKProfitsTax"
+        },
+        "company_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "snapshot_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "period_start": {
+          "type": "string",
+          "format": "date"
+        },
+        "period_end": {
+          "type": "string",
+          "format": "date"
+        },
+        "status": {
+          "const": "ok"
+        },
+        "data": {
+          "$ref": "tax-data.schema.json"
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "$ref": "fact.schema.json"
+          },
+          "minItems": 1
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schema_version",
+        "tool_result_id",
+        "tool_name",
+        "company_id",
+        "snapshot_id",
+        "period_start",
+        "period_end",
+        "status",
+        "data",
+        "facts",
+        "warnings"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "tool_result_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "tool_name": {
+          "type": "string",
+          "enum": [
+            "CalculateLiquidityRunway",
+            "CategorizeOpex",
+            "DetectCashFlowAnomalies",
+            "DraftHKProfitsTax"
+          ]
+        },
+        "company_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "snapshot_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+        },
+        "period_start": {
+          "type": "string",
+          "format": "date"
+        },
+        "period_end": {
+          "type": "string",
+          "format": "date"
+        },
+        "status": {
+          "const": "error"
+        },
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "INVALID_ARGUMENTS",
+                "COMPANY_NOT_FOUND",
+                "SNAPSHOT_MISMATCH",
+                "INVALID_PERIOD",
+                "UNSUPPORTED_CURRENCY",
+                "INSUFFICIENT_DATA",
+                "INTERNAL_TOOL_ERROR"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1
+            },
+            "retryable": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "code",
+            "message",
+            "retryable"
+          ]
+        }
+      },
+      "required": [
+        "schema_version",
+        "tool_result_id",
+        "tool_name",
+        "company_id",
+        "snapshot_id",
+        "period_start",
+        "period_end",
+        "status",
+        "error"
+      ]
+    }
+  ]
+}
