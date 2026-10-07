@@ -61,7 +61,9 @@ def check_documents() -> int:
         path
         for base in ("docs", "contracts", "fixtures", "prompts", "src")
         for path in (ROOT / base).rglob("*.md")
-        if not path.is_relative_to(ROOT / "docs/source")
+        if not any(
+            path.is_relative_to(ROOT / excluded) for excluded in ("docs/source", "docs/internal")
+        )
     )
     for path in paths:
         for target in re.findall(r"(?<!!)\[[^\]]*\]\(([^)]+)\)", path.read_text()):

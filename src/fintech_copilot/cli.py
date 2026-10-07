@@ -100,8 +100,24 @@ def main(argv: list[str] | None = None) -> int:
     command.add_argument("--seed", type=int, default=42)
     command.add_argument("--output", default="artifacts/demo")
     command.add_argument("--question")
+    interactive = sub.add_parser("chat", help="Interactive financial dialogue")
+    interactive.add_argument(
+        "--company",
+        required=True,
+        choices=["apex-logistics", "cloudscale-ai", "harbour-trade"],
+    )
+    interactive.add_argument("--provider", choices=["mock", "live"], default="mock")
+    interactive.add_argument("--seed", type=int, default=42)
+    interactive.add_argument("--output", default="artifacts/chat")
+    interactive.add_argument(
+        "--verbose", action="store_true", help="Show tool arguments and diagnostics"
+    )
     args = parser.parse_args(argv)
     try:
+        if args.command == "chat":
+            from fintech_copilot.chat_console import chat
+
+            return asyncio.run(chat(args))
         return asyncio.run(demo(args))
     except (ConfigurationError, ValueError, OSError) as exc:
         # Never echo provider exception bodies or credentials.

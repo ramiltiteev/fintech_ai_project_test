@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from importlib.resources import files
 from time import monotonic
@@ -14,6 +14,8 @@ from fintech_copilot.domain.models import Dataset
 from fintech_copilot.domain.results import TaxResult, ToolResult
 from fintech_copilot.tools.dispatcher import TOOLS, Dispatcher, RejectedCall
 
+from .context import model_tool_result, synthesis_options_message
+from .diagnostics import synthesis_diagnostic
 from .grounding import full_results, validate_synthesis
 from .models import Report, Synthesis
 from .providers import Provider, ProviderFailure, Turn
@@ -30,8 +32,8 @@ LIMITATIONS = (
 class Budgets:
     provider_turns: int = 8
     tool_calls: int = 12
-    attempt_timeout: float = 30
-    deadline: float = 120
+    attempt_timeout: float = 90
+    deadline: float = 300
     retry_backoff: float = 1
     synthesis_repairs: int = 1
 
@@ -44,6 +46,41 @@ class Run:
 
 
 DEFAULT_BUDGETS = Budgets()
+
+
+def assemble_report(
+    dataset: Dataset,
+    provider: Provider,
+    run_id: str,
+    results: tuple[ToolResult, ...],
+    synthesis: Synthesis | None,
+    reasons: tuple[str, ...] = (),
+) -> Report:
+    """Shared assembly after the caller has validated synthesis and evidence."""
+    successful = full_results(results, dataset.scope)
+    missing = set(TOOLS) - {r.tool_name for r in successful}
+    complete = synthesis is not None and not reasons and not missing
+    tax = next((r.data for r in successful if isinstance(r, TaxResult)), None)
+    fact_map = {
+        (f.tool_result_id, f.fact_id): f for r in results if r.status == "ok" for f in r.facts
+    }
+    return Report(
+        schema_version="1.0",
+        run_id=run_id,
+        generated_at=datetime.now(UTC),
+        company=dataset.company,
+        **dataset.scope.model_dump(),
+        seed=dataset.seed,
+        provider_mode=provider.mode,
+        model=provider.model,
+        status="complete" if complete else "partial",
+        partial_reasons=tuple(dict.fromkeys(reasons)),
+        facts=tuple(fact_map.values()),
+        synthesis=synthesis,
+        tax_draft=tax,
+        tool_results=results,
+        limitations=LIMITATIONS,
+    )
 
 
 async def run_agent(
@@ -100,6 +137,7 @@ async def run_agent(
     reasons: list[str] = []
     call_count = repairs = 0
     seen_call_ids: set[str] = set()
+    synthesis_phase = False
     try:
         for turn_index in range(budgets.provider_turns):
             response: Turn | None = None
@@ -111,7 +149,10 @@ async def run_agent(
                 timeout = min(budgets.attempt_timeout, remaining)
                 try:
                     response = await asyncio.wait_for(
-                        provider.complete(messages, definitions, timeout), timeout=timeout
+                        provider.complete(
+                            messages, [] if synthesis_phase else definitions, timeout
+                        ),
+                        timeout=timeout,
                     )
                     break
                 except TimeoutError:
@@ -137,7 +178,14 @@ async def run_agent(
                 await asyncio.sleep(budgets.retry_backoff)
             if response is None:
                 break
-            emit("provider_turn", turn=turn_index, status="ok", tool_call_count=len(response.calls))
+            emit(
+                "provider_turn",
+                turn=turn_index,
+                status="ok",
+                tool_call_count=len(response.calls),
+                finish_reason=response.finish_reason,
+                usage=asdict(response.usage) if response.usage is not None else None,
+            )
             messages.append(response.message())
             if response.calls:
                 exceeded = False
@@ -189,7 +237,11 @@ async def run_agent(
                             arguments=safe_args,
                         )
                         result = dispatcher.dispatch(call.name, call.arguments)
-                        output = result.model_dump_json()
+                        output = (
+                            result.model_dump_json()
+                            if isinstance(result, RejectedCall)
+                            else model_tool_result(result)
+                        )
                         if isinstance(result, RejectedCall):
                             emit(
                                 "tool_result",
@@ -211,6 +263,11 @@ async def run_agent(
                     messages.append({"role": "tool", "tool_call_id": call.id, "content": output})
                 if exceeded:
                     break
+                if len(full_results(tuple(results.values()), dataset.scope)) == len(TOOLS):
+                    messages.append(
+                        synthesis_options_message(tuple(results.values()), dataset.scope)
+                    )
+                    synthesis_phase = True
                 continue
             missing = set(TOOLS) - {
                 r.tool_name for r in full_results(tuple(results.values()), dataset.scope)
@@ -228,8 +285,14 @@ async def run_agent(
                 validate_synthesis(candidate, tuple(results.values()), dataset)
                 synthesis = candidate
                 break
-            except ValueError:
-                emit("grounding_rejected", error_code="INVALID_SYNTHESIS")
+            except ValueError as exc:
+                diagnostic = synthesis_diagnostic(exc)
+                emit(
+                    "grounding_rejected",
+                    error_code="INVALID_SYNTHESIS",
+                    repair_attempt=repairs,
+                    **diagnostic,
+                )
                 if repairs >= budgets.synthesis_repairs:
                     reasons.append("INVALID_SYNTHESIS")
                     break
@@ -237,9 +300,11 @@ async def run_agent(
                 messages.append(
                     {
                         "role": "user",
-                        "content": "Synthesis rejected. Use supported codes and existing "
-                        "full-period "
-                        "fact references. No extra fields, numbers or prose. Repair the JSON.",
+                        "content": "Synthesis rejected. Validation feedback:\n"
+                        + json.dumps(diagnostic, ensure_ascii=False)
+                        + "\nRepair these errors using successful full-period tool facts. "
+                        "Return only a JSON object matching the synthesis schema; "
+                        "no Markdown, extra fields, numbers or prose.",
                     }
                 )
         else:
@@ -252,30 +317,8 @@ async def run_agent(
         reasons.append("MISSING_TOOLS:" + ",".join(sorted(missing)))
     if synthesis is None and not reasons:
         reasons.append("MISSING_SYNTHESIS")
-    complete = synthesis is not None and not reasons and not missing
-    tax = next((r.data for r in successful if isinstance(r, TaxResult)), None)
-    fact_map = {
-        (f.tool_result_id, f.fact_id): f
-        for r in results.values()
-        if r.status == "ok"
-        for f in r.facts
-    }
-    report = Report(
-        schema_version="1.0",
-        run_id=run_id,
-        generated_at=datetime.now(UTC),
-        company=dataset.company,
-        **dataset.scope.model_dump(),
-        seed=dataset.seed,
-        provider_mode=provider.mode,
-        model=provider.model,
-        status="complete" if complete else "partial",
-        partial_reasons=tuple(dict.fromkeys(reasons)),
-        facts=tuple(fact_map.values()),
-        synthesis=synthesis,
-        tax_draft=tax,
-        tool_results=tuple(results.values()),
-        limitations=LIMITATIONS,
+    report = assemble_report(
+        dataset, provider, run_id, tuple(results.values()), synthesis, tuple(reasons)
     )
     emit(
         "run_finished",

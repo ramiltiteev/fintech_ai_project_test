@@ -294,7 +294,7 @@ def test_live_adapter_protocol_with_fake_transport(monkeypatch, golden):
 
     async def acompletion(**kwargs):
         request_log.append(kwargs)
-        turn = await mock.complete(kwargs["messages"], kwargs["tools"], kwargs["timeout"])
+        turn = await mock.complete(kwargs["messages"], kwargs.get("tools", []), kwargs["timeout"])
         return {"choices": [{"message": turn.message()}]}
 
     monkeypatch.setenv("LLM_MODEL", "openai/synthetic-test-model")

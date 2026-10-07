@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import re
+
+from fintech_copilot.domain.results import Fact
 from fintech_copilot.orchestration.models import Report
 
 ACTION_TEXT = {
@@ -19,6 +22,35 @@ FINDING_TEXT = {
     "tax_review_required": "Расходы требуют налоговой проверки",
     "no_material_findings": "Существенные сигналы риска не обнаружены",
 }
+
+
+def chat_text(text: str, facts: tuple[Fact, ...]) -> str:
+    """Replace already validated placeholders with original tool values."""
+
+    def value(match: re.Match[str]) -> str:
+        fact = facts[int(match.group(1))]
+        if fact.value is None:
+            return "не определяется"
+        if isinstance(fact.value, tuple):
+            return ", ".join(fact.value) or "не обнаружены"
+        if isinstance(fact.value, bool):
+            return "да" if fact.value else "нет"
+        if fact.unit in {"HKD", "months", "percent", "days"}:
+            whole, fraction = fact.value.split(".")
+            sign = "−" if whole.startswith("-") else ""
+            digits = whole.lstrip("-")
+            groups = [digits[max(0, i - 3) : i] for i in range(len(digits), 0, -3)]
+            number = sign + "\u00a0".join(reversed(groups)) + "," + fraction
+            unit = {"HKD": " HKD", "months": " мес", "percent": "%", "days": " дн."}[fact.unit]
+            return number + unit
+        return {
+            "finite": "конечный",
+            "cash_depleted": "денежный остаток исчерпан",
+            "not_burning": "положительного чистого burn нет",
+            "review_required": "нужна проверка",
+        }.get(fact.value, fact.value)
+
+    return re.sub(r"\{\{fact:(0|[1-9][0-9]*)\}\}", value, text)
 
 
 def escape(value: str) -> str:

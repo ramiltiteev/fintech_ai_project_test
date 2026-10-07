@@ -1,0 +1,10 @@
+# API dependency closure tested with Python 3.13; includes the CLI runtime.
+-r requirements-runtime.txt
+annotated-doc==0.0.5
+anyio==4.15.1
+click==8.5.0
+fastapi==0.141.1
+h11==0.16.0
+idna==3.20
+starlette==1.6.0
+uvicorn==0.53.0

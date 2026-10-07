@@ -10,8 +10,12 @@ requires-python = ">=3.11"
 dependencies = ["pydantic==2.13.5"]
 
 [project.optional-dependencies]
+api = ["fastapi==0.141.1", "uvicorn==0.53.0"]
 live = ["litellm>=1.80,<2"]
-dev = ["pytest==8.4.2", "ruff==0.16.7", "mypy==1.20.2", "jsonschema==4.26.0"]
+dev = [
+    "pytest==8.4.2", "ruff==0.16.7", "mypy==1.20.2", "jsonschema==4.26.0",
+    "fastapi==0.141.1", "uvicorn==0.53.0", "httpx==0.28.1",
+]
 
 [project.scripts]
 fintech-copilot = "fintech_copilot.cli:main"

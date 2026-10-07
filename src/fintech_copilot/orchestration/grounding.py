@@ -25,6 +25,34 @@ ACTIONS: dict[Finding, tuple[Action, ...]] = {
 }
 
 
+class GroundingError(ValueError):
+    """Server-owned validation code and location; never includes rejected input."""
+
+    def __init__(
+        self,
+        code: str,
+        path: tuple[str | int, ...] = (),
+        issue_code: str | None = None,
+        *,
+        allowed_actions: tuple[Action, ...] = (),
+        expected_evidence: tuple[tuple[Reference, ...], ...] = (),
+    ) -> None:
+        super().__init__(code)
+        self.code = code
+        self.path = path
+        self.issue_code = issue_code or code
+        self.allowed_actions = allowed_actions
+        self.expected_evidence = expected_evidence
+
+
+class GroundingErrors(ValueError):
+    """Independent insight failures collected for a single repair attempt."""
+
+    def __init__(self, errors: tuple[GroundingError, ...]) -> None:
+        super().__init__("; ".join(error.code for error in errors))
+        self.errors = errors
+
+
 def full_results(results: tuple[ToolResult, ...], scope: Scope) -> tuple[Success, ...]:
     by_name: dict[str, Success] = {}
     for result in results:
@@ -120,26 +148,78 @@ def validate_synthesis(
 ) -> None:
     successful = full_results(results, dataset.scope)
     if {r.tool_name for r in successful} != set(TOOLS):
-        raise ValueError("MISSING_FULL_PERIOD_TOOLS")
+        raise GroundingError("MISSING_FULL_PERIOD_TOOLS")
     transaction_ids = {tx.transaction_id for tx in dataset.transactions}
     facts = {}
     for result in successful:
         expected = catalogue(dataset, dataset.scope, result.tool_result_id, result.data)
         if expected != result.facts:
-            raise ValueError("FACT_DATA_MISMATCH")
+            raise GroundingError("FACT_DATA_MISMATCH")
         for fact in result.facts:
             if not set(fact.transaction_ids) <= transaction_ids:
-                raise ValueError("UNKNOWN_TRANSACTION_EVIDENCE")
+                raise GroundingError("UNKNOWN_TRANSACTION_EVIDENCE")
             facts[(result.tool_result_id, fact.fact_id)] = fact
     choices = options(successful)
-    for insight in synthesis.insights:
+    errors: list[GroundingError] = []
+    for index, insight in enumerate(synthesis.insights):
+        path: tuple[str | int, ...] = ("insights", index)
+        candidates = choices.get(insight.finding_code, [])
+        expected_evidence = tuple(candidates[:3])
         if insight.action_code not in ACTIONS[insight.finding_code]:
-            raise ValueError("INCOMPATIBLE_ACTION")
-        refs = {(ref.tool_result_id, ref.fact_id) for ref in insight.evidence}
-        if len(refs) != len(insight.evidence) or not refs <= facts.keys():
-            raise ValueError("FABRICATED_STALE_OR_DUPLICATE_REFERENCE")
-        if not any(
+            errors.append(
+                GroundingError(
+                    "INCOMPATIBLE_ACTION",
+                    (*path, "action_code"),
+                    allowed_actions=ACTIONS[insight.finding_code],
+                )
+            )
+        refs: set[tuple[str, str]] = set()
+        reference_error = False
+        for ref_index, ref in enumerate(insight.evidence):
+            pair = (ref.tool_result_id, ref.fact_id)
+            ref_path = (*path, "evidence", ref_index)
+            if pair in refs:
+                reference_error = True
+                errors.append(
+                    GroundingError(
+                        "FABRICATED_STALE_OR_DUPLICATE_REFERENCE",
+                        ref_path,
+                        "DUPLICATE_REFERENCE",
+                        expected_evidence=expected_evidence,
+                    )
+                )
+            if pair not in facts:
+                reference_error = True
+                errors.append(
+                    GroundingError(
+                        "FABRICATED_STALE_OR_DUPLICATE_REFERENCE",
+                        ref_path,
+                        "UNKNOWN_FACT_REFERENCE",
+                        expected_evidence=expected_evidence,
+                    )
+                )
+            refs.add(pair)
+        if not candidates:
+            errors.append(
+                GroundingError(
+                    "UNSUPPORTED_FINDING_OR_EVIDENCE",
+                    (*path, "finding_code"),
+                    "UNSUPPORTED_FINDING",
+                )
+            )
+        elif not reference_error and not any(
             {(ref.tool_result_id, ref.fact_id) for ref in candidate} <= refs
-            for candidate in choices.get(insight.finding_code, [])
+            for candidate in candidates
         ):
-            raise ValueError("UNSUPPORTED_FINDING_OR_EVIDENCE")
+            errors.append(
+                GroundingError(
+                    "UNSUPPORTED_FINDING_OR_EVIDENCE",
+                    (*path, "evidence"),
+                    "INSUFFICIENT_EVIDENCE",
+                    expected_evidence=expected_evidence,
+                )
+            )
+    if len(errors) == 1:
+        raise errors[0]
+    if errors:
+        raise GroundingErrors(tuple(errors))

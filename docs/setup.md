@@ -1,52 +1,73 @@
-# Проверка установки и сдачи
+# Установка и запуск
 
-В текущем окружении проверены команды из README. Следующие процедуры предназначены для независимого окружения с доступом к PyPI/Docker; в этой сессии они **не выполнялись**. Не объявлять setup завершённым до их проверки.
+Нужен Python 3.11+. Проверенное окружение: Python 3.13.5 и Pydantic 2.13.5. Команды приложения проверены в подготовленном окружении; независимая установка с нуля и wheel пока не подтверждены — [результаты проверок](validation.md).
 
-## Чистая установка
+## Локальное демо без ключа
 
-Из копии исходников без `.venv` и artifacts, Python 3.11+ (проверенная версия — 3.13.5):
+Из корня проекта:
 
 ```bash
 python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements-dev.txt
-.venv/bin/python -m pip install -e . --no-deps
-.venv/bin/python -m pytest
-.venv/bin/python -m ruff check .
-.venv/bin/python -m ruff format --check .
-.venv/bin/python -m mypy src
-.venv/bin/python -m fintech_copilot demo --company all --provider mock --seed 42
+.venv/bin/python -m pip install -e .
+.venv/bin/python -m fintech_copilot demo --company all --provider mock --seed 42 --output artifacts/demo
+.venv/bin/python -m fintech_copilot chat --company cloudscale-ai --provider mock --seed 42
 ```
 
-Build backend зафиксирован в pyproject. Дополнительно проверить wheel (`pip wheel . --no-deps`), его установку в другое окружение и CLI вне каталога репозитория: scenarios/tools/prompt должны читаться из package resources.
+Компании: `apex-logistics`, `cloudscale-ai`, `harbour-trade`; `all` доступен в batch-демо. Mock использует настоящий dispatcher и финансовые инструменты, а выбор вызовов и проверка текста эмулируются. Во время mock-запуска сеть, ключ и LiteLLM SDK не нужны. Данные, JSON/Markdown и trace сохраняются в игнорируемой папке `artifacts/`.
 
-## Docker
+## Подключение к своему LiteLLM Gateway
+
+Установить SDK и создать локальную конфигурацию:
+
+```bash
+.venv/bin/python -m pip install -e '.[live]'
+cp .env.example .env
+```
+
+Заполнить `.env` адресом Gateway, виртуальным ключом и разрешённым `model_name`:
+
+```dotenv
+LLM_MODEL=litellm_proxy/your-model-alias
+LITELLM_PROXY_API_BASE=https://your-gateway.example/v1
+LITELLM_PROXY_API_KEY=your-gateway-virtual-key
+```
+
+Модель должна поддерживать Tool Calling. Базовый URL может содержать `/v1` или префикс reverse proxy; SDK дописывает endpoint. Завершающий slash удаляется; credentials, query и fragment в URL запрещены. Ключи upstream провайдеров остаются на Gateway.
+
+`.env` автоматически не загружается. Экспортировать собственный файл и явно выбрать платный live-режим:
+
+```bash
+set -a
+. ./.env
+set +a
+.venv/bin/python -m fintech_copilot chat --company cloudscale-ai --provider live --seed 42
+.venv/bin/python -m fintech_copilot demo --company cloudscale-ai --provider live --seed 42 --output artifacts/live
+```
+
+Отсутствующая конфигурация даёт ошибку до запуска сценария. Автоматического переключения в mock нет. Для прямого API доступны `openai/`, `anthropic/`, `gemini/` и соответствующий ключ окружения из `.env.example`. Подробности диалога — в [chat.md](chat.md).
+
+## HTTP API и тесты
+
+Для [FastAPI/Swagger](api.md):
+
+```bash
+.venv/bin/python -m pip install -e '.[api]'
+.venv/bin/python -m uvicorn fintech_copilot.api:app --host 127.0.0.1 --port 8000
+```
+
+Для проверок установить dev-зависимости; команды и покрытие — в [validation.md](validation.md):
+
+```bash
+.venv/bin/python -m pip install -e '.[dev]'
+```
+
+## Docker — дополнительный вариант
+
+Dockerfile запускает offline-демо от непривилегированного пользователя. Сборка и запуск образа пока не проверены:
 
 ```bash
 docker build -t fintech-copilot .
 docker run --rm fintech-copilot
-docker run --rm -v "$PWD/artifacts/docker:/app/artifacts" fintech-copilot
 ```
 
-Для bind mount заранее создать каталог и дать UID 10001 право записи. Без mount артефакты находятся внутри контейнера. Проверить непривилегированного пользователя, три complete отчёта, отсутствие runtime network/API dependence и secrets в build context.
-
-## Live, отдельный платный режим
-
-Установить optional dependency `pip install '.[live]'`. Экспортировать `LLM_MODEL` с префиксом `openai/`, `anthropic/` или `gemini/` и ключ соответствующего провайдера. `.env` автоматически не загружается. Ключи не помещать в команды сдачи, Git или trace.
-
-```bash
-python -m fintech_copilot demo --company cloudscale-ai --provider live --seed 42 --output artifacts/live
-python -m pytest -m live
-```
-
-Эти команды обращаются к API и могут расходовать бюджет. Default pytest исключает marker live. Перед заявлением поддержки модели подтвердить настоящие tool calls и grounding, сохранить mode/model/trace. Offline transport fixture не заменяет live smoke.
-
-## GitHub delivery checklist
-
-- [x] Domain → Tools → Orchestration и воспроизводимое offline CLI.
-- [x] Независимые golden ожидания, три когорты и негативные grounding tests.
-- [x] Короткий README: sequence, actual mock trace, ограничения и Kafka/EDA.
-- [x] `.gitignore`/`.dockerignore`: `.env`, `.venv`, artifacts, caches, PDF и `docs/source/` исключены.
-- [ ] Чистая установка/wheel и Docker smoke; обновить implementation-status.
-- [ ] Выбрать и при необходимости проверить live-модель отдельно.
-- [ ] Сохранить локальный коммит (в текущем окружении `.git` доступен только для чтения).
-- [ ] Опубликовать код и проверить URL репозитория.
+`INSTALL_LIVE=true` добавляет SDK, `INSTALL_API=true` — HTTP-зависимости. Ключ передаётся только при запуске через `--env-file .env`. Для сохранения результатов можно монтировать `artifacts/`, предоставив UID 10001 право записи. Запуск API в контейнере описан в [api.md](api.md).

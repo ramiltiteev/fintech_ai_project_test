@@ -17,6 +17,9 @@ from fintech_copilot.domain.results import (
     TaxData,
     ToolResult,
 )
+from fintech_copilot.orchestration.chat import ChatReply
+from fintech_copilot.orchestration.chat_reply import ComposedReply, ModelReply
+from fintech_copilot.orchestration.conversation import ConversationReply
 from fintech_copilot.orchestration.models import Report, Synthesis
 
 
@@ -34,6 +37,10 @@ def main() -> None:
         "fact": Fact,
         "synthesis": Synthesis,
         "report": Report,
+        "chat-reply": ChatReply,
+        "conversation-reply": ConversationReply,
+        "model-reply": ModelReply,
+        "composed-reply": ComposedReply,
     }
     schemas = {
         name: model.model_json_schema(mode="serialization") for name, model in models.items()

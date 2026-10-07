@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Annotated, Literal, Self
 
 from pydantic import Field, model_validator
+from pydantic_core import PydanticCustomError
 
 from fintech_copilot.domain.models import Company, Day, FrozenModel, Identifier
 from fintech_copilot.domain.results import Fact, TaxData, ToolResult
@@ -45,7 +46,7 @@ class Synthesis(FrozenModel):
     def no_duplicates(self) -> Self:
         codes = [insight.finding_code for insight in self.insights]
         if len(codes) != len(set(codes)):
-            raise ValueError("Duplicate findings")
+            raise PydanticCustomError("duplicate_findings", "Each finding_code must appear once")
         return self
 
 

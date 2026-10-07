@@ -23,6 +23,7 @@ artifacts/
 *.pdf
 *.PDF
 /docs/source/
+/docs/internal/
 
 # Local editor state, logs and packaging outputs.
 .idea/
