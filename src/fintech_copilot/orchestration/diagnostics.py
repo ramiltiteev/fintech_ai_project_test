@@ -65,6 +65,11 @@ def invariant_diagnostic(code: str) -> dict[str, Any]:
 
 
 GROUNDING_HINTS = {
+    "MISSING_STRESS_RUNWAY_FINDING": (
+        "Include stress_low_runway with one complete supplied evidence bundle and an allowed "
+        "action. It describes repetition of last month's burn, not a probabilistic forecast. "
+        "Replace an optional finding if needed to stay within six insights."
+    ),
     "COMPOSITION_MISMATCH": "Compiled text and sources must match the original typed parts.",
     "UNKNOWN_FACT_ALIAS": "Copy an existing short ref from the fact catalogue, e.g. {{fact:f0}}.",
     "UNCITED_NUMBER": (

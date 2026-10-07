@@ -8,7 +8,7 @@ from random import Random
 from typing import Any
 
 from .finance import months
-from .models import Dataset, display, parse_money
+from .models import AnomalyConfig, Dataset, display, parse_money
 
 
 def split_cents(amount: Decimal, count: int, rng: Random) -> list[str]:
@@ -26,6 +26,7 @@ def split_cents(amount: Decimal, count: int, rng: Random) -> list[str]:
 def generate(config: dict[str, Any], company_id: str, seed: int) -> Dataset:
     if type(seed) is not int or seed < 0:
         raise ValueError("Seed must be a nonnegative integer")
+    anomaly_config = AnomalyConfig.model_validate(config.get("anomaly_config", {}))
     profile = next(
         (p for p in config["profiles"] if p["company"]["company_id"] == company_id), None
     )
@@ -136,6 +137,7 @@ def generate(config: dict[str, Any], company_id: str, seed: int) -> Dataset:
         "period_end": end.isoformat(),
         "opening_balance": profile["opening_balance"],
         "transactions": rows,
+        "anomaly_config": anomaly_config.model_dump(mode="json"),
     }
     dataset = Dataset.model_validate(payload)
     canonical = dataset.model_dump(mode="json", exclude={"snapshot_id"})

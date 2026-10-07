@@ -46,11 +46,15 @@ Pydantic-модели запрещают неизвестные поля; Datase
 
 Аргументы каждого tool: `company_id`, `snapshot_id`, `period_start`, `period_end`. Период состоит из полных календарных месяцев внутри snapshot. Модель не задаёт деньги, ставки, thresholds или правила. Dispatcher проверяет whitelist/scope и кеширует результат внутри snapshot. Произвольных file/network/shell tools нет.
 
+`Dataset.anomaly_config` хранит проверенные серверные thresholds и окно baseline; генератор переносит их из сценария. Настройки входят в hash snapshot и result ID, а serialized dataset воспроизводит детекцию без исходного сценария. Старые datasets без config получают документированные defaults.
+
 Успешный ToolResult содержит scope, стабильный result ID, typed `data`, `facts` и `warnings`. Fact содержит metric, value, unit, result/fact IDs, transaction IDs и derivation code. Значения каталога должны совпадать с `data`; агрегации сохраняют полный transaction evidence. Ошибка инструмента содержит безопасный code/message без raw exception для модели.
 
 ## Grounding и цикл агента
 
 Batch CLI и `/reports`: модель вызывает tools через Function Calling. После четырёх успешных full-period результатов получает компактную проекцию существующих фактов и все допустимые finding/action evidence bundles. Final/repair используют API JSON mode без tools. Pydantic проверяет Synthesis, а grounding — реальные источники, scope, финансовые predicates и допустимые действия. LLM выбирает и ранжирует insights; Markdown выводит их контролируемыми шаблонами.
+
+`stress_low_runway` — отдельный finding из tool-owned stress flag. Его evidence сохраняется в компактной проекции независимо от average runway; при активном флаге finding обязателен для полного synthesis. Условный stress не объявляется прогнозом.
 
 Чат использует планирование и выборочные вызовы: [chat.md](chat.md). Обычный разговор имеет отдельный контракт; финансовый writer выбирает fact/context parts, а сервер вставляет исходные значения. Отдельный model turn проверяет смысл пояснений. Это вероятностная проверка: корректная ссылка сама по себе не доказывает верную атрибуцию или причину.
 

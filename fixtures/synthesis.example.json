@@ -17,6 +17,28 @@
           "fact_id": "cloud:liquidity:runway_months"
         }
       ]
+    },
+    {
+      "finding_code": "stress_low_runway",
+      "action_code": "prepare_liquidity_buffer",
+      "evidence": [
+        {
+          "tool_result_id": "golden-cloud-liquidity",
+          "fact_id": "cloud:liquidity:last_month_stress_runway_months"
+        },
+        {
+          "tool_result_id": "golden-cloud-liquidity",
+          "fact_id": "cloud:liquidity:closing_cash"
+        },
+        {
+          "tool_result_id": "golden-cloud-liquidity",
+          "fact_id": "cloud:liquidity:last_month_net_burn"
+        },
+        {
+          "tool_result_id": "golden-cloud-liquidity",
+          "fact_id": "cloud:liquidity:last_month_stress_low_runway"
+        }
+      ]
     }
   ]
 }

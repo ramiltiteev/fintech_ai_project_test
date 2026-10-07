@@ -155,6 +155,17 @@ class Scope(FrozenModel):
         return self
 
 
+class AnomalyConfig(FrozenModel):
+    """Server-owned detection rules, persisted with the financial snapshot."""
+
+    minimum_baseline_count: Annotated[int, Field(strict=True, ge=1)] = 5
+    baseline_lookback_months: Annotated[int, Field(strict=True, ge=1)] = 3
+    transaction_ratio: Annotated[Money, Field(ge=Decimal("1.00"))] = Decimal("3.00")
+    transaction_min_delta: Annotated[Money, Field(ge=ZERO)] = Decimal("10000.00")
+    monthly_jump_ratio: Annotated[Money, Field(ge=Decimal("1.00"))] = Decimal("1.50")
+    monthly_jump_min_delta: Annotated[Money, Field(ge=ZERO)] = Decimal("10000.00")
+
+
 class Dataset(FrozenModel):
     schema_version: Literal["1.0"]
     snapshot_id: Identifier
@@ -164,6 +175,7 @@ class Dataset(FrozenModel):
     period_end: Day
     opening_balance: Money
     transactions: tuple[Transaction, ...]
+    anomaly_config: AnomalyConfig = Field(default_factory=AnomalyConfig)
 
     @model_validator(mode="after")
     def valid_snapshot(self) -> Self:

@@ -179,6 +179,7 @@ def categorize(dataset: Dataset, scope: Scope) -> CategorizationData:
 
 def anomalies(dataset: Dataset, scope: Scope) -> tuple[AnomalyData, tuple[str, ...]]:
     selected = dataset.select(scope)
+    config = dataset.anomaly_config
     history = tuple(
         tx
         for tx in dataset.transactions
@@ -192,16 +193,20 @@ def anomalies(dataset: Dataset, scope: Scope) -> tuple[AnomalyData, tuple[str, .
     for tx in candidates:
         month = tx.posted_on.replace(day=1)
         earliest = month
-        for _ in range(3):
+        for _ in range(config.baseline_lookback_months):
+            if earliest <= dataset.period_start:
+                break
             earliest = previous_month(earliest)
         baseline = tuple(
             t for t in history if earliest <= t.posted_on < month and t.category == tx.category
         )
-        if len(baseline) < 5:
+        if len(baseline) < config.minimum_baseline_count:
             warnings.add(f"INSUFFICIENT_BASELINE:{month:%Y-%m}:{tx.category}")
         else:
             center = median([t.amount for t in baseline])
-            threshold = max(center * 3, center + Decimal("10000.00"))
+            threshold = max(
+                center * config.transaction_ratio, center + config.transaction_min_delta
+            )
             if tx.amount >= threshold:
                 findings.append(
                     Anomaly(
@@ -240,7 +245,7 @@ def anomalies(dataset: Dataset, scope: Scope) -> tuple[AnomalyData, tuple[str, .
         current_rows = tuple(t for t in history if month <= t.posted_on < next_month(month))
         previous_rows = tuple(t for t in history if previous <= t.posted_on < month)
         current, prior = total(current_rows), total(previous_rows)
-        threshold = max(prior * Decimal("1.50"), prior + Decimal("10000.00"))
+        threshold = max(prior * config.monthly_jump_ratio, prior + config.monthly_jump_min_delta)
         if (prior > ZERO and current >= threshold) or (prior == ZERO and current > ZERO):
             findings.append(
                 Anomaly(

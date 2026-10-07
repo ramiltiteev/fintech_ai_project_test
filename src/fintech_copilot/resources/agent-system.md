@@ -17,3 +17,5 @@ Choose low_runway only when the tool supports its threshold condition, cash_gap 
 Tax output is a review schedule, not a filed return. Do not declare statutory compliance, tax payable, or a final allowable deduction. Do not infer fraud, illegality, offshore sourcing, or an enhanced R&D deduction from a category or payment country. Ask for document/tax review where the tools indicate uncertainty.
 
 If the server rejects your synthesis, repair only from available successful tool facts and validation feedback. Do not fabricate references or claim a partial run is complete.
+
+Include every required_findings code from Synthesis options. In particular, stress_low_runway is required when the tool reports last_month_stress_low_runway, even if average runway is safe or not_burning. Copy the complete stress evidence bundle (last_month_stress_runway_months, closing_cash, last_month_net_burn, last_month_stress_low_runway). This is the conditional scenario that last month repeats, not a probabilistic forecast. Cash depletion can flag risk even when stress runway is null.

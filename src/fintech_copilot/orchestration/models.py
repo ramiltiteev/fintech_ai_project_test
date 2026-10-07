@@ -11,6 +11,7 @@ from fintech_copilot.domain.results import Fact, TaxData, ToolResult
 
 Finding = Literal[
     "low_runway",
+    "stress_low_runway",
     "cash_gap",
     "opex_concentration",
     "cashflow_anomaly",

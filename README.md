@@ -39,7 +39,7 @@ DraftHKProfitsTax(scope)          → ok
 LLM Synthesis → grounding accepted → complete
 ```
 
-Проверено: 304 offline tests, Ruff, mypy; повторяемые mock CLI/chat, схемы и ASGI API. Live: три complete batch-профиля и два перепроверенных полных отчёта чата CloudScale. Отдельные запросы чата могут завершаться INVALID_REPLY; чистая установка, сетевой HTTP smoke и Docker пока не подтверждены. Результаты и ограничения: [проверки](docs/validation.md).
+Проверено: 335 offline tests, Ruff, mypy; повторяемые mock CLI/chat, схемы и ASGI API. До последних исправлений live: три complete batch-профиля и два перепроверенных полных отчёта чата CloudScale; текущая версия проверена offline. Отдельные запросы чата могут завершаться INVALID_REPLY; чистая установка, сетевой HTTP smoke и Docker пока не подтверждены. Результаты и ограничения: [проверки](docs/validation.md).
 
 Синтетика задаёт фиксированные месячные обороты/доли и специальные платежи; seed меняет детали. Нет сезонности, реальных контрагентов, открытых AP/AR, FX и audited accounts. Cash flow не равен прибыли; tax draft — expense review, `filing_ready=false`. Обычный разговор — текст LLM без финансовой схемы; анализ требует план и tools. Финансовый текст пишет LLM; значения вставляются по проверенным fact refs. Семантический LLM review снижает риск выдуманных объяснений, но не гарантирует их отсутствие. Чат ограничен данными выбранной компании.
 

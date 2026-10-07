@@ -15,6 +15,7 @@
             "type": "string",
             "enum": [
               "low_runway",
+              "stress_low_runway",
               "cash_gap",
               "opex_concentration",
               "cashflow_anomaly",

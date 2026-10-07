@@ -15,6 +15,7 @@ ACTION_TEXT = {
 }
 FINDING_TEXT = {
     "low_runway": "Ограниченный runway",
+    "stress_low_runway": "Риск ликвидности при повторении последнего месяца",
     "cash_gap": "Исторические кассовые разрывы",
     "opex_concentration": "Концентрация OPEX",
     "cashflow_anomaly": "Аномалия денежного потока",

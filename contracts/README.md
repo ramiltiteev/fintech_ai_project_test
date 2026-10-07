@@ -18,6 +18,8 @@ JSON Schema Draft 2020-12. Это исходный публичный v1 кон�
 
 ## Runtime checks поверх JSON Schema
 
+Dataset допускает `anomaly_config` с шестью серверными настройками: positive integer baseline count/lookback и Decimal string ratios/deltas. При отсутствии поля применяются defaults из [финансовой спецификации](../docs/financial-logic.md). Конфигурация хранится в snapshot, не принимается через tool arguments. Synthesis включает отдельный `stress_low_runway`; при активном tool stress flag этот finding обязателен в полном отчёте. Его evidence: stress runway, closing cash, last-month burn и stress flag.
+
 Обязательны calendar-date parsing и period constraints; cross-field company/snapshot consistency; uniqueness IDs; Decimal parsing с запретом binary floats; positive amounts; invoice conditions; category/movement validation; month coverage; tool result IDs и tool/fact value reconciliation; finding predicates; action compatibility; four successful full-period tools для complete.
 
 `format=date|date-time|uri` в JSON Schema проверяется при включённом FormatChecker. `$id` — относительное имя файла; offline resolver регистрирует каждую schema по basename. В CLI никакой schema reference не вызывает network fetch.

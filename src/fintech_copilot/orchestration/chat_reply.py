@@ -243,7 +243,10 @@ def model_evidence(evidence: dict[str, Any], facts: dict[str, Fact]) -> dict[str
         }
         for option in evidence["report_options"]["finding_options"]
     ]
-    return evidence | {"results": results, "report_options": {"finding_options": options}}
+    return evidence | {
+        "results": results,
+        "report_options": evidence["report_options"] | {"finding_options": options},
+    }
 
 
 def model_history_reply(reply: dict[str, Any], facts: dict[str, Fact]) -> str:

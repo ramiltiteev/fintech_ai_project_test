@@ -6,7 +6,7 @@
 
 | Проверка | Результат |
 |---|---|
-| Pytest | 304 passed, 1 live test deselected |
+| Pytest | 335 passed, 1 live test deselected |
 | Ruff lint / format | Passed |
 | mypy src | Passed, 29 source files |
 | Preparation и исходные JSON Schemas | Passed |
@@ -28,9 +28,13 @@ python scripts/export_schemas.py
 
 Тесты используют независимые golden expectations, три seeded профиля и настоящий dispatcher. Проверяются Decimal/invalid money, пустые месяцы, burn/cash statuses, subperiods, end-exclusive даты, неизвестные категории, thresholds без future leakage, финансовые predicates, поддельные/устаревшие refs, partial reports и бюджеты. Mock/SDK transport fixtures проверяют протокол без сети; scripted verdicts не подтверждают качество реального semantic review.
 
+Регрессии: average runway `3.82` при stress `2.00` сохраняет отдельное обязательное предупреждение в batch и контексте полного чата. Пропуск требует repair, повторный пропуск не публикуется; граница stress проверена до округления. Все шесть anomaly settings применяются к реальным tools, меняют baseline/thresholds и сохраняются при JSON replay; config входит в snapshot/result IDs. Golden-ожидания не изменялись. CLI mock всех трёх профилей после исправлений — complete.
+
 ## Реальные LLM-прогоны
 
 Gateway: LiteLLM SDK 1.104.0, модель `mimo-v2.6-flash`; запросы выполнялись в явно выбранном live-режиме.
+
+Эти live-прогоны относятся к версии до исправления stress/config. Новая версия проверена offline; новый платный прогон не выполнялся. Добавление config в hash меняет generated snapshot IDs при том же seed, поэтому старый trace иллюстрирует прежнюю версию; defaults сохраняют финансовые результаты.
 
 | Сценарий | Подтверждённый результат |
 |---|---|

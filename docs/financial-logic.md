@@ -43,6 +43,8 @@ last_month_stress_runway = closing_cash / last_month_net_burn,
 
 `low_runway` при `finite` и unrounded runway < 3 либо при cash_depleted. Tool возвращает boolean flag, рассчитанный до округления; аналогично `last_month_stress_low_runway` для stress. При null stress flag=false, при cash_depleted flag=true. Общий стабильный месяц не скрывает stress runway после аномалии. Исторический gap показывается независимо от ending cash и average burn: прибыльная Apex всё равно может испытывать дефицит между расходами и оплатой.
 
+Synthesis различает `low_runway` и `stress_low_runway`. Второй вывод опирается на stress runway, closing cash, last-month burn и исходный stress flag. При активном stress flag полный отчёт обязан включать `stress_low_runway`, даже если average runway безопасен; компактный контекст сохраняет его evidence. Это условный сценарий повторения последнего месяца, а не прогноз вероятности дефицита.
+
 Invoice lag: для operating revenue credits с invoice metadata compute `(posted_on - invoice_issued_on).days`, median lag, count и terms distribution. Ссылка на receipts; не заявлять DSO, просрочку непогашенных invoices или gap forecast. Категории `revenue` и `unknown` receipts обе участвуют в operating inflow.
 
 ## Категоризация
@@ -53,7 +55,9 @@ Return OPEX subtotal, unknown subtotal, inventory subtotal и non-OPEX subtotal;
 
 ## Аномалии
 
-Объяснимый v1 algorithm, пороги — config сервера, не модель:
+Объяснимый v1 algorithm, пороги — типизированный `Dataset.anomaly_config` сервера, не модель. Генератор копирует настройки сценария в immutable snapshot; они участвуют в snapshot/result IDs. Старые datasets без этого поля используют defaults ниже. Lookback/count — положительные целые; ratios — конечные Decimal strings с двумя знаками, не меньше `1.00`; deltas — неотрицательные суммы HKD. Невалидные настройки отклоняются.
+
+Defaults: `minimum_baseline_count=5`, `baseline_lookback_months=3`, `transaction_ratio="3.00"`, `transaction_min_delta="10000.00"`, `monthly_jump_ratio="1.50"`, `monthly_jump_min_delta="10000.00"`. Пункты ниже описывают defaults; детектор использует соответствующие поля config.
 
 1. Для каждого месяца и категории operating debits собрать baseline из ВСЕХ транзакций предыдущих календарных месяцев того же snapshot, максимум три месяца. Future leakage запрещён. Baseline внутри месяца неизменен, включая при subperiod query.
 2. При ≥ 5 baseline observations определить median `m`. Outlier если amount ≥ 3 × m И amount - m ≥ 10000 HKD. Baseline IDs и candidate ID включаются в evidence. `unknown` не смешивать с известными категориями.

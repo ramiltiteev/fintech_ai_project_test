@@ -240,6 +240,21 @@ def check_examples() -> None:
     synthesis = load(ROOT / "fixtures/synthesis.example.json")
     data = load(ROOT / "fixtures/golden/cloudscale-ai.json")
     expected = load(ROOT / "fixtures/golden/expected.json")["cloudscale-ai"]
+    last_month = date.fromisoformat(data["period_end"]) - timedelta(days=1)
+    last_month_burn = sum(
+        (
+            money(t["amount"]) * (1 if t["direction"] == "debit" else -1)
+            for t in data["transactions"]
+            if t["movement_type"] == "operating"
+            and t["posted_on"][:7] == last_month.strftime("%Y-%m")
+        ),
+        Decimal(0),
+    )
+    expected = expected | {
+        "last_month_net_burn": display(last_month_burn),
+        "last_month_stress_low_runway": money(expected["closing_cash"]) <= 0
+        or (last_month_burn > 0 and money(expected["closing_cash"]) / last_month_burn < 3),
+    }
     ids = {t["transaction_id"] for t in data["transactions"]}
     facts = {f["fact_id"]: f for f in result["facts"]}
     require(result["snapshot_id"] == data["snapshot_id"], "Example snapshot mismatch")

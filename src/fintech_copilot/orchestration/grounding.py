@@ -16,6 +16,7 @@ from .models import Action, Finding, Insight, Reference, Synthesis
 
 ACTIONS: dict[Finding, tuple[Action, ...]] = {
     "low_runway": ("prepare_liquidity_buffer", "review_operating_spend"),
+    "stress_low_runway": ("prepare_liquidity_buffer", "review_operating_spend"),
     "cash_gap": ("review_collection_terms", "prepare_liquidity_buffer"),
     "opex_concentration": ("review_operating_spend",),
     "cashflow_anomaly": ("verify_payment_documents",),
@@ -84,6 +85,17 @@ def options(results: tuple[Success, ...]) -> dict[Finding, list[tuple[Reference,
         if isinstance(result, LiquidityResult):
             if result.data.low_runway:
                 add("low_runway", result, ("runway_months", "closing_cash", "average_net_burn"))
+            if result.data.last_month_stress_low_runway:
+                add(
+                    "stress_low_runway",
+                    result,
+                    (
+                        "last_month_stress_runway_months",
+                        "closing_cash",
+                        "last_month_net_burn",
+                        "last_month_stress_low_runway",
+                    ),
+                )
             if result.data.cash_gap_intervals:
                 add("cash_gap", result, ("cash_gap_ids", "minimum_cash"))
         elif isinstance(result, CategorizationResult):
@@ -219,6 +231,17 @@ def validate_synthesis(
                     expected_evidence=expected_evidence,
                 )
             )
+    if "stress_low_runway" in choices and not any(
+        insight.finding_code == "stress_low_runway" for insight in synthesis.insights
+    ):
+        errors.append(
+            GroundingError(
+                "MISSING_STRESS_RUNWAY_FINDING",
+                ("insights",),
+                allowed_actions=ACTIONS["stress_low_runway"],
+                expected_evidence=tuple(choices["stress_low_runway"]),
+            )
+        )
     if len(errors) == 1:
         raise errors[0]
     if errors:
